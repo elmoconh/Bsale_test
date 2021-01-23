@@ -4,10 +4,10 @@ include("./php/conect.php");
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />    
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Bsale Test</title>
     <link rel="stylesheet" href="css/custom.css">
@@ -56,7 +56,7 @@ include("./php/conect.php");
 
 
 
-<select name="users" onchange="showUser(this.value)">
+<select name="users" onchange="showUser(this.value)" >
     <option value="">Filtrar:</option>
     <?php 
     $conn = connection();
@@ -79,13 +79,13 @@ foreach ($conn->query($query) as $row){
             <?php
                     if($row['url_image']){
 
-                        echo "<img src='".$row['url_image']."' alt='Nature' class='responsive'>";
+                        echo "<img src='".$row['url_image']."' alt='Nature' class='responsive  u-full-width'>";
                     }else{
-                        echo "<img src='https://www.hongshen.cl/wp-content/uploads/2016/07/no-disponible.png' alt='Nature' class='responsive'>";
+                        echo "<img src='https://www.hongshen.cl/wp-content/uploads/2016/07/no-disponible.png'  class='imagen-curso u-full-width'>";
                     }
             ?>
             <div class='info-card'>
-            <h4> <?php echo $row['name']?></h4>
+            <h4> <?php  echo $row['name']?></h4>
 
               <p class='precio'> <?php echo "Descuento: ".$row['discount']?>%    <br><span class='u-pull-left '>$ <?php echo $row['price']; ?></span></p>
               <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" >Agregar Al Carrito</a>
