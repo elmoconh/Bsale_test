@@ -71,7 +71,7 @@ include("./php/conect.php");
 
 <div id='lista-productos' class='container'>
 <?php
-//$query = "SELECT * FROM  product inner join category on product.category = category.id where category.name ='pisco'";
+//$query = "SELECT * FROM  product inner join category on product.category = category.id where category.name ='snack'";
 $query = "SELECT * FROM  product order by discount desc";
 foreach ($conn->query($query) as $row){
  ?>
@@ -88,7 +88,7 @@ foreach ($conn->query($query) as $row){
             <h4> <?php  echo $row['name']?></h4>
 
               <p class='precio'> <?php echo "Descuento: ".$row['discount']?>%    <br><span class='u-pull-left '>$ <?php echo $row['price']; ?></span></p>
-              <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" >Agregar Al Carrito</a>
+              <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" >Agregar</a>
             </div>
         </div>
   
