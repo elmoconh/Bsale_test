@@ -1,6 +1,6 @@
 <?php 
 
-include("./includes/conect.php");
+include("./conect.php");
 
 $conn = connection();
 $query = "SELECT * FROM  product";
