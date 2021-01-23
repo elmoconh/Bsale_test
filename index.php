@@ -81,8 +81,8 @@ $mensaje = "<h1>Aprovecha los descuentos</h1>";
 if($option ==0){
 $query = "SELECT * FROM  product where discount > 0  order by discount desc";
 }
-if($option >0 && $option >8 ){
-    $query = "SELECT * FROM  product where category =$option  order by discount desc";
+if(($option >0 ) ){
+    $query = "SELECT * FROM  product where category = $option  order by discount desc";
 }
 if($option ==8 ){
         $query = "SELECT * FROM  product order by price asc";
@@ -120,7 +120,7 @@ if($option ==7){
 if($option ==8){
     $mensaje = "<h1>Todo</h1>";
 }
-
+echo$option;
 echo $mensaje;
 
 //Despliegue de productos
