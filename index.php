@@ -19,32 +19,36 @@ include("./php/conect.php");
         <div class="row">
             <div class="four columns">
                 <img src="https://dojiw2m9tvv09.cloudfront.net/4/8/img-logos-logo-bsale-naranjo.png?1437" id="logo">
-            </div>           
-        </div>
-
+            </div>
+            
 <!----------  CARRITO DE COMPRAS ----------------------------------------->
-<div class="three columns u-pull-right">
-    <label >CARRITO DE COMPRAS </label>
-    <ul>
-        <li class="submenu">
-            <img src="img/cart.png" id="img-carrito">
-                <div id="carrito">                              
-                    <table id="lista-carrito" class="u-full-width">
-                        <thead>
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>       
-                            </tr>
-                        </thead>
-                    </table>
-                    <a href="#" id="vaciar-carrito" class="button u-full-width">Vaciar Carrito</a>
-                </div>
-        </li>
-    </ul>
-</div>
+            
+            <div class="two columns u-pull-right">
+                <ul>
+                    <li class="submenu">
+                            <img src="img/cart.png" id="img-carrito">
+                            <div id="carrito">
+                                    
+                                    <table id="lista-carrito" class="u-full-width">
+                                        <thead>
+                                            <tr>
+                                                <th>Imagen</th>
+                                                <th>Nombre</th>
+                                                <th>Precio</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+
+                                    <a href="#" id="vaciar-carrito" class="button u-full-width">Vaciar Carrito</a>
+                            </div>
+                    </li>
+                </ul>
+            </div>
 <!----------  FIN CARRITO DE COMPRAS ----------------------------------------->
 
+        </div>
 <!----------  FILTRADO DE DATOS ----------------------------------------->
 <form action="index.php" method="post">
     <label>Categorías</label>
@@ -63,6 +67,7 @@ include("./php/conect.php");
     <input type="submit" value="Filtrar">
 </form>
 <!----------  Fin FILTRADO DE DATOS ----------------------------------------->
+
     </div>
 </header>
 
@@ -81,8 +86,8 @@ $mensaje = "<h1>Aprovecha los descuentos</h1>";
 if($option ==0){
 $query = "SELECT * FROM  product where discount > 0  order by discount desc";
 }
-if(($option >0 ) ){
-    $query = "SELECT * FROM  product where category = $option  order by discount desc";
+if($option >0){
+    $query = "SELECT * FROM  product where category =$option  order by discount desc";
 }
 if($option ==8 ){
         $query = "SELECT * FROM  product order by price asc";
@@ -120,7 +125,6 @@ if($option ==7){
 if($option ==8){
     $mensaje = "<h1>Todo</h1>";
 }
-echo$option;
 echo $mensaje;
 
 //Despliegue de productos
@@ -164,5 +168,8 @@ foreach ($conn->query($query) as $row){
 
 <!----------  SCRIPT CARRITO DE COMPRAS ----------------------------------------->
 <script src="js/app.js"></script>
+
+
+
 </body>
 </html>
