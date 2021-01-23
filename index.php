@@ -85,10 +85,10 @@ foreach ($conn->query($query) as $row){
                     }
             ?>
             <div class='info-card'>
-                <div class="nombre"><?php echo $row['name'];?></div>
+            <h4> <?php echo $row['name']?></h4>
 
               <p class='precio'> <?php echo "Descuento: ".$row['discount']?>%    <br><span class='u-pull-left '>$ <?php echo $row['price']; ?></span></p>
-                <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" > <h6>Agregar Al Carrito</h6></a>
+              <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" >Agregar Al Carrito</a>
             </div>
         </div>
   
