@@ -1,5 +1,5 @@
 <?php 
-include("../php/includes/conect.php");
+include("./php/conect.php");
 
 ?>
 
