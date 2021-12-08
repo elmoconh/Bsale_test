@@ -7,7 +7,7 @@ include("./php/conect.php");
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Bsale Test</title>
+    <title>Carrito de compras </title>
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/skeleton.css">
@@ -17,8 +17,7 @@ include("./php/conect.php");
 <header id="header" class="header">
     <div class="container">
         <div class="row">
-            <div class="four columns">
-                <img src="https://dojiw2m9tvv09.cloudfront.net/4/8/img-logos-logo-bsale-naranjo.png?1437" id="logo">
+            <div class="four columns"> 
             </div>
             
 <!----------  CARRITO DE COMPRAS ----------------------------------------->
