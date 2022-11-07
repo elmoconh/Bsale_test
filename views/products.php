@@ -1,13 +1,18 @@
+
 <!-- Nav -->
+<div style="background-color:white; width:100%; height:100px">
+
 <nav class="navbar navbar-inverse bg-inverse fixed-top bg-faded">
-    <div class="row">
-        <div class="col">
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cart">Cart (<span class="total-count"></span>)</button><button class="clear-cart btn btn-danger">Clear Cart</button></div>
-    </div>
+    <div class="row" >
+          <div class="col">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cart">Carrito (<span class="total-count"></span>)</button>
+            <button class="clear-cart btn btn-danger">Limpiar</button>
+          </div> 
+        </div>
 </nav>
+</div>
 
-
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <!-- Main -->
 <div class="container">
@@ -16,16 +21,30 @@
 if($data['products']){
     foreach($data['products'] as $product){
     ?>
-    <div class="col">
-    <div class="card" style="width: 20rem;">
-        <img class="card-img-top" src="<?php echo $product['url_image'];?>" alt="Card image cap">
-    <div class="card-block">
-          <h4 class="card-title"><?php echo $product['name'];?></h4>
-          <p class="card-text">Precio: <?php echo $product['price'];?></p>
-          <a href="#" data-name="Orange" data-price="<?php echo $product['price'];?>" class="add-to-cart btn btn-primary">Agrega al carrito</a>
+      <div class="col">
+        <div class="card" style="width: 20rem;">
+        
+        <?php
+        if($product['url_image']==''){
+            ?>
+              <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap" width = 250 height= 250>
+            <?php
+        } else {
+            ?>
+              <img class="card-img-top" src="<?php echo $product['url_image']; ?>" alt="Card image cap" width = 250 height= 250>
+            <?php
+        }
+        ?>
+          <div class="card-block">
+            <h4 class="card-title"><?php echo $product['name'];?></h4>
+            <h5 class="card-text">Precio: <?php echo $product['price'];?></h5>
+            <p class="card-text">Descuento: <?php echo $product['discount'];?> %</p>
+
+            <a href="#" data-name="Orange" data-price="<?php echo $product['price'];?>" class="add-to-cart btn btn-primary">Agrega al carrito</a>
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
+
     <?php
     }
 }
