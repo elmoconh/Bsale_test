@@ -1,174 +1,34 @@
+<link rel="stylesheet" href="./views/style.css">
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 <?php 
-include("./php/conect.php");
+//include("./php/conect.php");
+
+require_once "./config/conect.php";
+require_once "./config/config.php";
+require_once "./controllers/Products.php";
+require_once "./core/routes.php";
+
+
+if(isset($_GET['c'])){
+		
+    $controlador = cargarControlador($_GET['c']);
+    
+    if(isset($_GET['a'])){
+        if(isset($_GET['id'])){
+            cargarAccion($controlador, $_GET['a'], $_GET['id']);
+            } else {
+            cargarAccion($controlador, $_GET['a']);
+        }
+        } else {
+        cargarAccion($controlador, METODO_PRINCIPAL);
+    }
+    
+    } else {
+    
+    $controlador = cargarControlador(CONTROL_PRINCIPAL);
+    $accionTmp = METODO_PRINCIPAL;
+    $controlador->$accionTmp();
+}
+
 ?>
-<!DOCTYPE html>
-<html lang>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Carrito de compras </title>
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/skeleton.css">
-</head>
-
-<body>
-<header id="header" class="header">
-    <div class="container">
-        <div class="row">
-            <div class="four columns"> 
-            </div>
-            
-<!----------  CARRITO DE COMPRAS ----------------------------------------->
-            
-            <div class="two columns u-pull-right">
-                <ul>
-                    <li class="submenu">
-                            <img src="img/cart.png" id="img-carrito">
-                            <div id="carrito">
-                                    
-                                    <table id="lista-carrito" class="u-full-width">
-                                        <thead>
-                                            <tr>
-                                                <th>Imagen</th>
-                                                <th>Nombre</th>
-                                                <th>Precio</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-
-                                    <a href="#" id="vaciar-carrito" class="button u-full-width">Vaciar Carrito</a>
-                            </div>
-                    </li>
-                </ul>
-            </div>
-<!----------  FIN CARRITO DE COMPRAS ----------------------------------------->
-
-        </div>
-<!----------  FILTRADO DE DATOS ----------------------------------------->
-<form action="index.php" method="post">
-    <label>Categorías</label>
-        <select name="filter" id="filter" >
-            <option value="0">Filtrar:</option>
-            <?php 
-                $conn = connection();
-                $query = "SELECT * FROM  category";
-                foreach ($conn->query($query) as $row){?>
-                <option value="<?php echo $row['id'] ?>"> <?php echo  $row['name'];?></option>
-                <?php
-                }
-            ?>
-            <option value="8">Ver todo</option>
-        </select>
-    <input type="submit" value="Filtrar">
-</form>
-<!----------  Fin FILTRADO DE DATOS ----------------------------------------->
-
-    </div>
-</header>
-
-
-<!----------  PRODUCTOS ----------------------------------------->
-
-<div id='lista-productos' class='container'>    
-
-<?php
-
-//Se recibe la petición de filtrado por parte del usuario
-$option = $_POST['filter'];
-$mensaje = "<h1>Aprovecha los descuentos</h1>";
-
-//Dependiendo de la opción la consulta a la base de datos varía en función al ID de lacategoria 
-if($option ==0){
-$query = "SELECT * FROM  product where discount > 0  order by discount desc";
-}
-if($option >0){
-    $query = "SELECT * FROM  product where category =$option  order by discount desc";
-}
-if($option ==8 ){
-        $query = "SELECT * FROM  product order by price asc";
-}
-
-
-//También variará el mensaje mostrado en el index de la aplicación 
-if($option ==1){
-   $mensaje = "<h1>Bebidas Energéticas</h1>"; 
-}
-
-if($option ==2){
-    $mensaje = "<h1>Piscos</h1>";
-}
-
-if($option ==3){
-    $mensaje = "<h1>Ron</h1>";
-}
-
-if($option ==4){
-    $mensaje = "<h1>Bebida</h1>";
-}
-
-if($option ==5){
-    $mensaje = "<h1>Snack</h1>";
-}
-
-if($option ==6){
-    $mensaje = "<h1>Cerveza</h1>";
-}
-
-if($option ==7){
-    $mensaje = "<h1>Vodka</h1>";
-}
-if($option ==8){
-    $mensaje = "<h1>Todo</h1>";
-}
-echo $mensaje;
-
-//Despliegue de productos
-foreach ($conn->query($query) as $row){
- ?>  
-         <div class='card'>
-            <?php
-            //Se determina si el producto contiene o no imagen
-                if($row['url_image']){
-                    echo "<img src='".$row['url_image']."' alt='Nature' class='responsive  u-full-width'>";
-                }else{
-                    echo "<img src='https://www.hongshen.cl/wp-content/uploads/2016/07/no-disponible.png' alt='Nature'  class='imagen-curso u-full-width'>";
-                }
-            ?>
-            <div class='info-card'>
-            <h4> <?php  
-             echo utf8_encode($row['name'] );?></h4>
-
-              <p class='precio'> <?php echo "Descuento: ".$row['discount']?>%    <br><span class='u-pull-left '>Precio: $ <?php echo $row['price']; ?></span></p>
-              <a  class='u-full-width button-primary button input agregar-carrito' id='buton' data-id="<?php $row['id']?>" >Agregar</a>
-            </div>
-        </div>
-<?php
-}
-?>
-</div>
-<!----------  Fin Productos----------------------------------------->
-
-
-<footer id="footer" class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="four columns">
-                        <nav id="principal" class="menu">
-                                <a class="enlace" href="#">Helmer Ignacio Morales Aranda</a>
-                        </nav>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-<!----------  SCRIPT CARRITO DE COMPRAS ----------------------------------------->
-<script src="js/app.js"></script>
-
-
-
-</body>
-</html>
