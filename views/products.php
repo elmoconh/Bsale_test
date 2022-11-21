@@ -1,294 +1,198 @@
 
+
 <!-- Nav -->
 <div style="background-color:white; width:100%; height:100px">
-
-<nav class="navbar navbar-inverse bg-inverse fixed-top bg-faded">
-    <div class="row" >
-          <div class="col">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cart">Carrito (<span class="total-count"></span>)</button>
-            <button class="clear-cart btn btn-danger">Limpiar</button>
-          </div> 
-        </div>
-</nav>
+  <nav class="navbar navbar-inverse bg-inverse fixed-top bg-faded">
+      <div class="row" >
+            <div class="col">
+              <button id="modal" type="button" class="btn btn-primary">Carrito (<span class="total-count"></span>)</button>
+              <button class="btn btn-success" data-toggle="modal" data-target="#modalForm"> Ver carrito </button>
+              <button class="clear-cart btn btn-danger" onclick="deleteItems()">Limpiar</button>
+            </div> 
+          </div>
+  </nav>
 </div>
+<!-- Button to trigger modal -->
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
 
 <!-- Main -->
-<div class="container">
-    <div class="row">
-<?php
-if($data['products']){
-    foreach($data['products'] as $product){
-    ?>
-      <div class="col">
-        <div class="card" style="width: 20rem;">
-        
+
+
         <?php
-        if($product['url_image']==''){
+        $img = "";
+        $total = 0;
+        if($data['products']){
+            foreach($data['products'] as $product){
+                $total = (1-($product['discount']/100)) * $product['price'];
             ?>
-              <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap" width = 250 height= 250>
-            <?php
-        } else {
-            ?>
-              <img class="card-img-top" src="<?php echo $product['url_image']; ?>" alt="Card image cap" width = 250 height= 250>
-            <?php
+
+
+              <?php
+
+                if($product['url_image']==''){
+
+                     $img ='<img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap" width = 250 height= 250>';
+              
+                } else {
+                  $img ='<img class="card-img-top" src="'.$product['url_image'].'" alt="Card image cap" width = 250 height= 250>';
+                }
+
+                    echo '<div class="product-item">'.
+                            $img.
+                            '<div class="product-name">'.utf8_encode($product['name'] ).'</div>'.
+                            '<div class="price">$<span>'.$product['price']. '</span></div>'.
+                            '<div class="discount"><span>'.$product['discount']. '</span>%</div>'.
+                            '<div class="final-price">$<span>'.$total. '</span></div>'.
+                          						'<input type="text" class="product-quantity" name="quantity" value="1" size="2" />'.
+                                      '<input type="submit" value="Add to Cart" class="add-to-cart" onClick="addToCart(this)" />'.
+                
+                        '</div>';
+                
+           
+          }
         }
-        ?>
-          <div class="card-block">
-            <h4 class="card-title"><?php echo $product['name'];?></h4>
-            <h5 class="card-text">Precio: <?php echo $product['price'];?></h5>
-            <p class="card-text">Descuento: <?php echo $product['discount'];?> %</p>
+      ?>
 
-            <a href="#" data-name="Orange" data-price="<?php echo $product['price'];?>" class="add-to-cart btn btn-primary">Agrega al carrito</a>
-        </div>
-      </div>
-    </div>
 
-    <?php
-    }
-}
-?>
-
-  
- <!-- Modal -->
-<div class="modal fade" id="cart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Cart</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <table class="show-cart table">
-          
-        </table>
-        <div>Total price: $<span class="total-cart"></span></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Order now</button>
-      </div>
-    </div>
-  </div>
-</div> 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script>
-  // ************************************************
-// Shopping Cart API
-// ************************************************
+var btn = document.getElementById('modal');
+var obj = {};
+array = [];
+cart=[];
 
-var shoppingCart = (function() {
-  // =============================
-  // Private methods and propeties
-  // =============================
-  cart = [];
+function addToCart(element){
+    var productParent = $(element).closest('div.product-item');
+    
+    var price = $(productParent).find('.final-price span').text();
+	  var productName = $(productParent).find('.product-name').text();
+	  var quantity = $(productParent).find('.product-quantity').val();
+    var img = $(productParent).find('.card-img-top').attr('src');
+    
+    const cartItem = {
+		        productName: productName,
+		        price: price,
+		        quantity: quantity,
+            img: img
+	        };
+
+    this.insertCart(cartItem);
+    $('.price-cart').html(cartItem.price);
+    $('.quantity-cart').html(cartItem.quantity);
+
+    var cartItemJSON = JSON.stringify(cartItem);
+    var cartArray = new Array();
   
-  // Constructor
-  function Item(name, price, count) {
-    this.name = name;
-    this.price = price;
-    this.count = count;
-  }
-  
-  // Save cart
-  function saveCart() {
-    sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
-  }
-  
-    // Load cart
-  function loadCart() {
-    cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
-  }
-  if (sessionStorage.getItem("shoppingCart") != null) {
-    loadCart();
-  }
-  
+	  cartArray.push(cartItemJSON);
 
-  // =============================
-  // Public methods and propeties
-  // =============================
-  var obj = {};
-  
-  // Add to cart
-  obj.addItemToCart = function(name, price, count) {
-    for(var item in cart) {
-      if(cart[item].name === name) {
-        cart[item].count ++;
-        saveCart();
-        return;
-      }
-    }
-    var item = new Item(name, price, count);
-    cart.push(item);
-    saveCart();
-  }
-  // Set count from item
-  obj.setCountForItem = function(name, count) {
-    for(var i in cart) {
-      if (cart[i].name === name) {
-        cart[i].count = count;
-        break;
-      }
-    }
-  };
-  // Remove item from cart
-  obj.removeItemFromCart = function(name) {
-      for(var item in cart) {
-        if(cart[item].name === name) {
-          cart[item].count --;
-          if(cart[item].count === 0) {
-            cart.splice(item, 1);
-          }
-          break;
-        }
-    }
-    saveCart();
-  }
+	  var cartJSON = JSON.stringify(cartArray);
+	  sessionStorage.setItem('shopping-cart', cartJSON);  
+    var cart = JSON.parse(sessionStorage.getItem('shopping-cart'));
+    
 
-  // Remove all items from cart
-  obj.removeItemFromCartAll = function(name) {
-    for(var item in cart) {
-      if(cart[item].name === name) {
-        cart.splice(item, 1);
-        break;
-      }
-    }
-    saveCart();
-  }
+    array.push(cart);
 
-  // Clear cart
-  obj.clearCart = function() {
-    cart = [];
-    saveCart();
-  }
-
-  // Count cart 
-  obj.totalCount = function() {
-    var totalCount = 0;
-    for(var item in cart) {
-      totalCount += cart[item].count;
-    }
-    return totalCount;
-  }
-
-  // Total cart
-  obj.totalCart = function() {
-    var totalCart = 0;
-    for(var item in cart) {
-      totalCart += cart[item].price * cart[item].count;
-    }
-    return Number(totalCart.toFixed(2));
-  }
-
-  // List cart
-  obj.listCart = function() {
-    var cartCopy = [];
-    for(i in cart) {
-      item = cart[i];
-      itemCopy = {};
-      for(p in item) {
-        itemCopy[p] = item[p];
-
-      }
-      itemCopy.total = Number(item.price * item.count).toFixed(2);
-      cartCopy.push(itemCopy)
-    }
-    return cartCopy;
-  }
-
-  return obj;
-})();
-
-
-
-$('.add-to-cart').click(function(event) {
-  event.preventDefault();
-  var name = $(this).data('name');
-  var price = Number($(this).data('price'));
-  shoppingCart.addItemToCart(name, price, 1);
-  displayCart();
-});
-
-// Clear items
-$('.clear-cart').click(function() {
-  shoppingCart.clearCart();
-  displayCart();
-});
-
-
-function displayCart() {
-  var cartArray = shoppingCart.listCart();
-  var output = "";
-  for(var i in cartArray) {
-    output += "<tr>"
-      + "<td>" + cartArray[i].name + "</td>" 
-      + "<td>(" + cartArray[i].price + ")</td>"
-      + "<td><div class='input-group'><button class='minus-item input-group-addon btn btn-primary' data-name=" + cartArray[i].name + ">-</button>"
-      + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
-      + "<button class='plus-item btn btn-primary input-group-addon' data-name=" + cartArray[i].name + ">+</button></div></td>"
-      + "<td><button class='delete-item btn btn-danger' data-name=" + cartArray[i].name + ">X</button></td>"
-      + " = " 
-      + "<td>" + cartArray[i].total + "</td>" 
-      +  "</tr>";
-  }
-  $('.show-cart').html(output);
-  $('.total-cart').html(shoppingCart.totalCart());
-  $('.total-count').html(shoppingCart.totalCount());
+    this.totalCount();
+    this.totalPrice(cartItem.price, cartItem.quantity);
 }
 
-// Delete item button
+function deleteItems(){
+  sessionStorage.removeItem('shopping-cart');
+  array = [];
+  console.log('delete cart: '+ array.length);
+  this.totalCount();
+  totalPrice();
+}
 
-$('.show-cart').on("click", ".delete-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.removeItemFromCartAll(name);
-  displayCart();
-})
+function totalCount(){
+  var cart = JSON.parse(sessionStorage.getItem('shopping-cart'));
+  var totalItems = array.length;
+  $('.total-count').html(totalItems);
+}
+
+function totalPrice(price, quantity){
+  var item = [];
+
+  var total = price * quantity;
+  var cart = JSON.parse(sessionStorage.getItem('shopping-cart'));
+  var totalPrice = 0;
+  if (array.length > 0) {
+    for (var i = 0; i < array.length; i++) {
+      totalPrice = totalPrice + total;
+    }
+  }else{
+    totalPrice = 0;
+  }
+
+   
+  $('.total-cart').html(totalPrice);
+  $('.item-cart').html(cart);
+}
+
+function showModal(){
+  array = JSON.parse(sessionStorage.getItem('shopping-cart'));
+  console.log('array: '+ array.length);
+  if(array.length > 0){
+    $('#myModal').modal('show');
+  }else{
+    alert('No hay productos en el carrito');
+  }
+  
+}
+
+function insertCart(element){
+  console.log('element: '+ element);
+  var row ='';
+  row = `
+    <td>${element.productName}</td>
+    <td>${element.price}</td>
+    <td>${element.quantity}</td>
+    <td>${element.img}</td>
+  `;
+  console.log('row: '+ row);
+  cart.push(row);
+
+}
 
 
-// -1
-$('.show-cart').on("click", ".minus-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.removeItemFromCart(name);
-  displayCart();
-})
-// +1
-$('.show-cart').on("click", ".plus-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.addItemToCart(name);
-  displayCart();
-})
 
-// Item count input
-$('.show-cart').on("change", ".item-count", function(event) {
-   var name = $(this).data('name');
-   var count = Number($(this).val());
-  shoppingCart.setCountForItem(name, count);
-  displayCart();
-});
-
-displayCart();
 
 </script>
 
 <style>
-  body {
-    padding-top: 80px;
-  }
-  
-  .show-cart li {
-    display: flex;
-  }
-  .card {
-    margin-bottom: 20px;
-  }
-  .card-img-top {
-    width: 200px;
-    height: 200px;
-    align-self: center;
-  }
+
+
+#shopping-cart {
+	margin: 40px;
+}
+
+
+.product-item {
+	float: left;
+	background: #ffffff;
+	margin: 30px 30px 0px 0px;
+	border: #E0E0E0 1px solid;
+	padding: 10px 10px 20px 10px;
+    line-height: 30px;
+    text-align: center;
+}
+
 </style>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalForm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Body -->
+            <span class="item-cart"></span>
+            total: <span class="total-cart"></span>
+            <!-- Modal Footer -->
+        </div>
+    </div>
+</div>
