@@ -15,9 +15,8 @@
 <!-- Button to trigger modal -->
 
 
-
 <!-- Main -->
-
+<div class ='container'>
 
         <?php
         $img = "";
@@ -32,10 +31,10 @@
 
                 if($product['url_image']==''){
 
-                     $img ='<img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap" width = 250 height= 250>';
+                     $img ='<img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap" width= 250 height= 250>';
               
                 } else {
-                  $img ='<img class="card-img-top" src="'.$product['url_image'].'" alt="Card image cap" width = 250 height= 250>';
+                  $img ='<img class="card-img-top" src="'.$product['url_image'].'" alt="Card image cap" width= 250 height= 250>';
                 }
 
                     echo '<div class="product-item">'.
@@ -44,16 +43,18 @@
                             '<div class="price">$<span>'.$product['price']. '</span></div>'.
                             '<div class="discount"><span>'.$product['discount']. '</span>%</div>'.
                             '<div class="final-price">$<span>'.$total. '</span></div>'.
-                          						'<input type="text" class="product-quantity" name="quantity" value="1" size="2" />'.
-                                      '<input type="submit" value="Add to Cart" class="add-to-cart" onClick="addToCart(this)" />'.
-                
+                            '<div class="row padded">'.
+                          						'Cantidad: <input type="number" class="product-quantity" name="quantity" value="1" min=1 max=100 size="2"/> <br>' .
+
+                                      '<input type="submit" value="Agregar al carro" class="btn btn-primary" onClick="addToCart(this)" />'.
+                            '</div>'.
                         '</div>';
                 
            
           }
         }
       ?>
-
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -67,24 +68,17 @@ array = [];
 cart=[];
 
 function addToCart(element){
-    var productParent = $(element).closest('div.product-item');
-    
+    var productParent = $(element).closest('div.product-item');  
     var price = $(productParent).find('.final-price span').text();
 	  var productName = $(productParent).find('.product-name').text();
 	  var quantity = $(productParent).find('.product-quantity').val();
     var img = $(productParent).find('.card-img-top').attr('src');
-    
     const cartItem = {
 		        productName: productName,
 		        price: price,
 		        quantity: quantity,
             img: img
 	        };
-
-    this.insertCart(cartItem);
-    $('.price-cart').html(cartItem.price);
-    $('.quantity-cart').html(cartItem.quantity);
-
     var cartItemJSON = JSON.stringify(cartItem);
     var cartArray = new Array();
   
@@ -131,7 +125,7 @@ function totalPrice(price, quantity){
 
    
   $('.total-cart').html(totalPrice);
-  $('.item-cart').html(cart);
+  
 }
 
 function showModal(){
@@ -145,26 +139,42 @@ function showModal(){
   
 }
 
-function insertCart(element){
-  console.log('element: '+ element);
-  var row ='';
-  row = `
-    <td>${element.productName}</td>
-    <td>${element.price}</td>
-    <td>${element.quantity}</td>
-    <td>${element.img}</td>
-  `;
-  console.log('row: '+ row);
-  cart.push(row);
+function tableGenerate(){
+  const newTable = document.createElement("table");
+  newTable.innerHTML = "<thead><th>Player</th><th>Score</th></thead>";
+
+  for(element in  array){
+    var item = array[element];
+    var itemJSON = JSON.parse(item);
+    var row = '<tr><td><img src="'+itemJSON.img+'" width= 50 height= 50></td><td>'+itemJSON.productName+'</td><td>'+itemJSON.price+'</td><td>'+itemJSON.quantity+'</td></tr>';
+    newTable.innerHTML += row;
+  }
+  document.getElementById("table").appendChild(newTable);
 
 }
-
-
-
 
 </script>
 
 <style>
+body {
+  background-color: #f1f1f1;
+}
+
+input {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 5px;
+  width: 50px;
+
+}
+
+ .container{
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+ }
 
 
 #shopping-cart {
@@ -178,8 +188,30 @@ function insertCart(element){
 	margin: 30px 30px 0px 0px;
 	border: #E0E0E0 1px solid;
 	padding: 10px 10px 20px 10px;
-    line-height: 30px;
-    text-align: center;
+  line-height: 30px;
+  width: 300px;
+  text-align: center;
+}
+.card_img_top{
+  width: 250px;
+  height: 250px;
+}
+
+.right{
+    width: 50%;
+    align-self: center;
+}
+.left{
+    width: 50%;
+    align-self: center;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    padding: 10px;
+
 }
 
 </style>
@@ -190,8 +222,10 @@ function insertCart(element){
     <div class="modal-dialog">
         <div class="modal-content">
             <!-- Modal Body -->
-            <span class="item-cart"></span>
+            <div id="table"></div>
+
             total: <span class="total-cart"></span>
+
             <!-- Modal Footer -->
         </div>
     </div>
