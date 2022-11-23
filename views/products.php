@@ -5,9 +5,9 @@
   <nav class="navbar navbar-inverse bg-inverse fixed-top bg-faded">
       <div class="row" >
             <div class="col">
-              <button id="modal" type="button" class="btn btn-primary">Carrito (<span class="total-count"></span>)</button>
+              <button class="btn btn-primary" data-toggle="modal" data-target="#modalForm">Carrito (<span class="total-count"></span>)</button>
               <button class="btn btn-success" data-toggle="modal" data-target="#modalForm"> Ver carrito </button>
-              <button class="clear-cart btn btn-danger" onclick="deleteItems()">Limpiar</button>
+  
             </div> 
           </div>
   </nav>
@@ -96,11 +96,9 @@ function addToCart(element){
 }
 
 function deleteItems(){
+
   sessionStorage.removeItem('shopping-cart');
-  array = [];
-  console.log('delete cart: '+ array.length);
-  this.totalCount();
-  totalPrice();
+  location.reload();
 }
 
 function totalCount(){
@@ -125,6 +123,7 @@ function totalPrice(price, quantity){
 
    
   $('.total-cart').html(totalPrice);
+  tableGenerate();
   
 }
 
@@ -140,15 +139,17 @@ function showModal(){
 }
 
 function tableGenerate(){
+  console.log('recibo: '+ array.length);
   const newTable = document.createElement("table");
-  newTable.innerHTML = "<thead><th>Player</th><th>Score</th></thead>";
-
+  newTable.setAttribute("id", "table");
+  //newTable.innerHTML = "";
   for(element in  array){
     var item = array[element];
     var itemJSON = JSON.parse(item);
-    var row = '<tr><td><img src="'+itemJSON.img+'" width= 50 height= 50></td><td>'+itemJSON.productName+'</td><td>'+itemJSON.price+'</td><td>'+itemJSON.quantity+'</td></tr>';
+    var row = '<tr><td><img src="'+itemJSON.img+'" width= 50 height= 50></td><td>'+itemJSON.productName+'</td><td>'+itemJSON.quantity+'</td><td>$'+itemJSON.price+'</td></tr>';
     newTable.innerHTML += row;
   }
+
   document.getElementById("table").appendChild(newTable);
 
 }
@@ -214,6 +215,19 @@ input {
 
 }
 
+#table{
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
 </style>
 
 
@@ -222,11 +236,19 @@ input {
     <div class="modal-dialog">
         <div class="modal-content">
             <!-- Modal Body -->
-            <div id="table"></div>
+            <table>            
+              
 
-            total: <span class="total-cart"></span>
+            <thead><th>Imagen</th><th>Producto</th><th>Cantidad</th> <th>Precio</th></thead>
+            </table>
+                        <div id="table"></div>
+
+
+            <h4>Total:<span class="total-cart"></span></h4>
 
             <!-- Modal Footer -->
+            <button class="clear-cart btn btn-danger" onclick="deleteItems()">Limpiar carrito</button>
         </div>
+        
     </div>
 </div>
